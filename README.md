@@ -10,7 +10,7 @@
 
 ## FAQ
 
-- You might want to disable ASLR. For example use `setarch `uname -m` -R [executable]`.
+- You might want to disable ASLR. See the makefile entry for `make run`.
 
 ## References
 

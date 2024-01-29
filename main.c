@@ -96,7 +96,10 @@ int load_binary(struct vm *vm, const char *path) {
   return 0;
 }
 
-int main() {
+int main(int argc, char **argv) {
+  // A helper to help you to find the address of the exploited function.
+  // We commented out as this would always leads to a warning.
+
   printf("exploit() located at %p\n", (void *) exploit);
 
   struct vm vm = {.vm_mem_size = 0x200000 };
