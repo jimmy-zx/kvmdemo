@@ -2,7 +2,7 @@ CFLAGS+=-Wall -Wextra -Wpedantic
 
 all: main guest.bin
 
-main: main.o
+main: main.o kvmutil.o
 
 guest.o: guest.S
 	as -32 guest.S -o guest.o

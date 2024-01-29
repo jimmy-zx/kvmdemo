@@ -4,6 +4,8 @@
 _start:
 	movw $target,%ax
 	outw %ax,$0x10
+	movw $target,%ax
+	outw %ax,$0x20
 	hlt
 
 	.data
