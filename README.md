@@ -1,5 +1,19 @@
 # kvmdemo
 
+## Tasks
+
+1. There are some vulunerbility in the hypervisor `main.c`. Identify this and
+modify the guest application `guest.S` to force the hypervisor to call the function `exploit()`.
+
+2. Implement a handler for handling a guest request to read a character from
+the hypervisor's STDIN. The guest should be able to use `inb $0x30,[register]`
+to read a character from the hypervisor's STDIN.
+
+### What to submit:
+
+- The modified `guest.S` in task 1.
+- The modified `main.c` in task 2.
+
 ## IO Ports
 
 | I/O | Port | Value | Description |
