@@ -97,4 +97,19 @@ them with a call to the hypervisor. (hypercall)
 
 Now the CPU is virtualized. What about devices?
 
+IO are just privilged instructions `in`, `out` / mmaped IO. Which are trapped
+to the hypervisor when called.
 
+Instead, we can use custom drivers to issue **hypercalls** instead.
+
+> Hypercalls can be must faster than traps.
+
+The guest drivers *knows* what the guest O/S are doing, and are aware of
+the presence of a hypervisor. Therefore special optimization can be done.
+
+## Lab
+
+## References
+
+- [OLS](https://www.kernel.org/doc/ols/2007/ols2007v1-pages-179-188.pdf)
+- [CMU](https://www.cs.cmu.edu/~410-f06/lectures/L31_Virtualization.pdf)
