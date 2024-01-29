@@ -107,6 +107,14 @@ Instead, we can use custom drivers to issue **hypercalls** instead.
 The guest drivers *knows* what the guest O/S are doing, and are aware of
 the presence of a hypervisor. Therefore special optimization can be done.
 
+## VM detection
+
+WIP
+
+## VM escape
+
+WIP
+
 ## Lab
 
 ## References
