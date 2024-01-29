@@ -107,6 +107,30 @@ Instead, we can use custom drivers to issue **hypercalls** instead.
 The guest drivers *knows* what the guest O/S are doing, and are aware of
 the presence of a hypervisor. Therefore special optimization can be done.
 
+Other devices (such as MMU) would also require cooperation from the hypervisor.
+
+### Types of hypervisors
+
+- Type-I hypervisor: runs directly from the hardware (ESXi, KVM, Xen)
+- Type-II hypervisor: runs on an O/S (VirtualBox, VMWare, Qemu)
+
+[Picture of topology]()
+
+Note: Qemu itself is a type-II hypervisor (and an emulator). Qemu/KVM
+uses tools from Qemu to emulate devices, and Qemu/KVM is a Type-I hypervisor.
+
+### Hardware support
+
+`vmx` (Intel VT-x), `svm` (AMD-v), allowing the CPU to enter
+a virtual execution mode (in Ring 0) but the host OS is still protected.
+
+Page table virtualization (SLAT): treat guest physical address as a host-virtual address.
+Nested Page Tables (AMD), Extended Page Tables (Intel)
+
+I/O virtualization, IOMMU virtualization: allow mmap'd IO to be used directly in guests: AMD-Vi (AMD), VT-d (Intel)
+
+Nested (hardware) virtualization.
+
 ## VM detection
 
 WIP
@@ -121,3 +145,7 @@ WIP
 
 - [OLS](https://www.kernel.org/doc/ols/2007/ols2007v1-pages-179-188.pdf)
 - [CMU](https://www.cs.cmu.edu/~410-f06/lectures/L31_Virtualization.pdf)
+
+- [x86 virtualization](https://en.wikipedia.org/wiki/X86_virtualization)
+- [IOMMU](https://en.wikipedia.org/wiki/Input%E2%80%93output_memory_management_unit)
+- [SLAT](https://en.wikipedia.org/wiki/Second_Level_Address_Translation)
