@@ -1,4 +1,4 @@
-CFLAGS+=-Wall -Wextra -Wpedantic -O0 -g -std=c11
+CFLAGS+=-Wall -Wextra -Wpedantic -O0 -g -std=c11 -fno-stack-protector
 
 all: main guest.bin
 
@@ -12,5 +12,5 @@ guest.bin: guest.o
 
 .PHONY: run
 
-run: main
+run: all
 	setarch `uname -m` -R ./main
