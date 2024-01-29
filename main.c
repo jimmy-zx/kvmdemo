@@ -14,7 +14,7 @@
 #define PORT_BUGGY_PRINT 0x20
 
 static void exploit() {
-  printf("This hypervisor has been exploited\n");
+  printf("This hypervisor has been exploited.\n");
 }
 
 void buggy_print(struct vcpu *vcpu) {
@@ -96,9 +96,10 @@ int load_binary(struct vm *vm, const char *path) {
   return 0;
 }
 
-int main(int argc, char **argv) {
+int main() {
   // A helper to help you to find the address of the exploited function.
-  // We commented out as this would always leads to a warning.
+  // This would always leads to a warning.
+  // COMMENT IT OUT BEFORE YOUR SUBMISSION!
 
   printf("exploit() located at %p\n", (void *) exploit);
 
