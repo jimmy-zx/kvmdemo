@@ -64,6 +64,7 @@ void *vcpu_thread(void *data) {
     switch (vcpu->vcpu_kvm_run->exit_reason) {
       case KVM_EXIT_IO:
         if (io_handler(vcpu) < 0) {
+          fprintf(stderr, "io_handler failed, panicing\n");
           return (void *) -1;
         }
         break;
