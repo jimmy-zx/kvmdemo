@@ -7,7 +7,8 @@ modify the guest application `guest.S` to force the hypervisor to call the funct
 
 2. Implement a handler for handling a guest request to read a character from
 the hypervisor's STDIN. The guest should be able to use `inb $0x30,[register]`
-to read a character from the hypervisor's STDIN.
+to read a character from the hypervisor's STDIN. Make sure to verify
+your implementation.
 
 ### What to submit:
 
@@ -25,6 +26,10 @@ to read a character from the hypervisor's STDIN.
 ## FAQ
 
 - You might want to disable ASLR. See the makefile entry for `make run`.
+- This only runs on a Linux machine with permission to access `/dev/kvm`.
+    Search for `how to enable kvm` if such device does not exists.
+- This project only works for `x86-64`. If you are using a virtual machine
+    to run this project, make sure nested virtualization is enabled.
 
 ## References
 
