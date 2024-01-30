@@ -2,13 +2,18 @@
 
 ## Tasks
 
-1. There are some vulunerbility in the hypervisor `main.c`. Identify this and
-modify the guest application `guest.S` to force the hypervisor to call the function `exploit()`.
+1. There are some buffer overflow vulunerbility in the hypervisor `main.c`.
+Identify this and modify the guest application `guest.S` to force
+the hypervisor to call the function `exploit()`.
+
+You should NOT modify any part of the hypervisor.
 
 2. Implement a handler for handling a guest request to read a character from
 the hypervisor's STDIN. The guest should be able to use `inb $0x30,[register]`
 to read a character from the hypervisor's STDIN. Make sure to verify
-your implementation.
+your implementation using your own guest, but do not submit your modified guest.
+
+The two tasks above are independent of each other.
 
 ### What to submit:
 
