@@ -36,6 +36,11 @@ The two tasks above are independent of each other.
 - This project only works for `x86-64`. If you are using a virtual machine
     to run this project, make sure nested virtualization is enabled.
 
+## Hints
+
+[Useful link](https://sourceware.org/binutils/docs/as/Pseudo-Ops.html)
+to construct your payload using GNU as.
+
 ## References
 
 - [kvm-hello-world](https://github.com/dpw/kvm-hello-world/)
