@@ -149,3 +149,7 @@ WIP
 - [x86 virtualization](https://en.wikipedia.org/wiki/X86_virtualization)
 - [IOMMU](https://en.wikipedia.org/wiki/Input%E2%80%93output_memory_management_unit)
 - [SLAT](https://en.wikipedia.org/wiki/Second_Level_Address_Translation)
+
+## License
+
+This work is licensed under CC BY 4.0
