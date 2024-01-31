@@ -9,10 +9,12 @@
 ## Why VM
 
 In CSC347:
+
 - Run another O/S with vulunerbility
 - Emulate network topology
 
 Generally:
+
 - Kernel development (do not want to crash the working system during debugging)
 - Multiple O/S ABI, compatability (Gaming in Windows, Running MS Office on Linux, WSL)
 - Multiplexing (Cloud computing like AWS)
@@ -21,33 +23,53 @@ Generally:
 
 ## VM Vendors
 
-- VMWare
+- VMWare Workstation / ESXi (Vmware)
 - VirtualBox (Oracle)
-- QEMU/KVM
-- Xen
+- QEMU/KVM (Supported by Redhat)
+- Xen (Supported by Citrix)
+
+We will use KVM in the lab.
 
 ## Similar technologies
 
-Containers:
+### Containers
+
+Depends on OS features, requireing same ABI and ISA.
+Provides isolation.
 
 - Docker
-- LinuX Containers
+- Linux Containers
 - K8s
-- Chroot
-- Wine
+
+### Other technologies
+
+- Chroot: Changes the `/` directory.
+- Wine: Compatability layer (ABI) for Win32
 
 ## What is a VM
 
-- Virtualizes system resources
-- Transparency
+Proposed in 1974:
 
-But an O/S already does that!
+> An *efficient*, *isolated*, *duplicate* of the real machine.
 
-![ABI vs ISA from (1)](assets/ABIvsISA.png)
+- Efficiency: minor performance overhead.
+- Resource control: hypervisor has complete control over systme resources.
+- Transparency: identical execution environemt
+
+Sounds similar to an O/S.
+
+## Process vs System virtualization
+
+- *Process* virtual machines (like JVM) provide virtual ABI.
+- *System* virtual machines provide a complete system environment.
+
+We will focus on system virtual machines.
+
+![ABI vs ISA (1)](assets/ABIvsISA.png)
 
 ## How to build a VM
 
-Goal: run an O/S kernel
+Goal: run (multiple) O/S kernel
 
 Run in an existing O/S, e.g., the Linux Kernel.
 
@@ -56,12 +78,7 @@ O/S provides CPU multiplexing using processes, but in user mode (Ring 3).
 What should we do when the kernel wants an priviledged instruction?
 (Setting up interrupt handlers, page tables, etc.)
 
-## Types of hypervisors
-
-- Type-I hypervisor: runs directly from the hardware (ESXi, KVM, Xen)
-- Type-II hypervisor: runs on an O/S (VirtualBox, VMWare, Qemu)
-
-![Type I VM (2)](assets/T1vm.png){width=40%}\ ![Type II VM (2)](assets/T2vm.png){width=40%}
+We need some program to handle that (hypervisors).
 
 ## VM Topology
 
@@ -69,13 +86,21 @@ We want something to adapt the physical interface to the guest OS.
 
 ![Topology (1)](assets/VMTopology.png)
 
+## Where to place the hypervisor
+
+- Type-I hypervisor: runs directly from the hardware (ESXi, KVM, Xen)
+- Type-II hypervisor: runs on an O/S (VirtualBox, VMWare, Qemu)
+
+![Type I VM (2)](assets/T1vm.png){width=40%}\ ![Type II VM (2)](assets/T2vm.png){width=40%}
+
 ## How to build a VM - Goals
 
 Performance! We want the guest to be run with small overheads.
 
 ### Full virtualization
 
-Interpreting the instructions on the fly is. (Similar to Python)
+Interpreting the instructions on the fly. (Similar to Python)
+
 Very slow!
 
 ### Paravirtualization
@@ -88,7 +113,7 @@ Some instructions needs to be handled by the hypervisor.
 ## Virtualize priviledged instruction
 
 When the guest wants to execute some priviledge instruction, it must be
-**intercepted** and trapped into the hypervisor so that the request can be
+**intercepted** by the hypervisor so that the request can be
 **interpreted** so that the hypervisor does the request for the guest and
 pass back the control to the guest.
 
@@ -205,6 +230,30 @@ WIP
 
 ## Lab
 
+We want to show you a hypervisor is implemented, and how exploits works.
+
+We built a [hypervisor](https://github.com/jimmy-zx/kvmdemo/tree/master)
+using the KVM module within ~300 LOC.
+
+This hypervisor only handles priviledged IO instructions (`in` and `out`).
+
+## Lab - Tasks
+
+### Task 1
+
+We left a very obvious expolit in the hypervisor.
+Identify this exploit, modify the guest to force the hypervisor
+to call the function `exploit()`.
+
+### Task 2
+
+You will built a very simple handler to allow the guest to read
+characters from the hypervisor's STDIN.
+
+## End of slides
+
+### Q&A
+
 ## References
 
 1. [OLS](https://www.kernel.org/doc/ols/2007/ols2007v1-pages-179-188.pdf)
@@ -213,11 +262,13 @@ WIP
 4. [Wikipedia: IOMMU](https://en.wikipedia.org/wiki/Input%E2%80%93output_memory_management_unit)
 5. [Wikipedia: SLAT](https://en.wikipedia.org/wiki/Second_Level_Address_Translation)
 6. [Wikipedia: Virtualization](https://en.wikipedia.org/wiki/Virtualization)
+7. [Formal requirements for virtualizable third generation architectures](https://dl.acm.org/doi/10.1145/361011.361073)
 
 ### Graphs
 
 1. [James E. Smith and Ravi Nair - Virtual Machines](https://www.sciencedirect.com/book/9781558609105/virtual-machines)
 2. [Virtualizing I/O Devices on VMware Workstation's Hosted Virtual Machine Monitor](https://www.usenix.org/conference/2001-usenix-annual-technical-conference/virtualizing-io-devices-vmware-workstations)
+3. [Xen and the art of virtualization](https://dl.acm.org/doi/10.1145/945445.945462)
 
 ## License
 
