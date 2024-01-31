@@ -225,6 +225,7 @@ e.g. `in eax, #port         'Read input from that port'`
 ## Compute CPU overhead time (IPR)
 - Execution of some special instructions produce remarkable additional Virtual Machine Monitor overhead.
 - Making use of the relative time overhead, VM environment can be detected.
+- ![handling sensitive instructions](assets/s3.png)
 
 
 ## Anti VM detection (IPR)
