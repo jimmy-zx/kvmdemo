@@ -1,5 +1,11 @@
 # CSC427 - Virtual machines
 
+## Table of contents
+
+1. Introduction to VMs
+2. VM detection
+3. VM escape
+
 ## Why VM
 
 In CSC347:
