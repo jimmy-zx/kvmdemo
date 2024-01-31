@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Install pandoc
         run: |
-          apt-get install pandoc
+          sudo apt-get install pandoc
       - name: Compile
         run: |
           make README.pdf
