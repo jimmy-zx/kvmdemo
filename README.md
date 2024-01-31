@@ -37,7 +37,7 @@ Containers:
 
 But an O/S already does that!
 
-[Image for vm topology](img1.png)
+![ABI vs ISA](assets/ABIvsISA.png)
 
 ## How to build a VM
 
@@ -50,12 +50,19 @@ O/S provides CPU multiplexing using processes, but in user mode (Ring 3).
 What should we do when the kernel wants an priviledged instruction?
 (Setting up interrupt handlers, page tables, etc.)
 
+## VM Topology
+
+We want something to adapt the physical interface to the guest OS.
+
+![Topology](assets/VMTopology.png)
+
 ## How to build a VM - Goals
 
 Performance! We want the guest to be run with small overheads.
 
-Interpreting the instructions on the fly is very slow! (Like Python)
-We want the binary to be executed on the CPU directly.
+Interpreting the instructions on the fly is very slow. (Like Python)
+We want the binary to be executed on the CPU directly. (As much as possible,
+only if guest ISA is the same as host ISA.)
 
 ## Virtualize priviledged instruction
 
@@ -111,10 +118,7 @@ Other devices (such as MMU) would also require cooperation from the hypervisor.
 - Type-I hypervisor: runs directly from the hardware (ESXi, KVM, Xen)
 - Type-II hypervisor: runs on an O/S (VirtualBox, VMWare, Qemu)
 
-[Picture of topology]()
-
-Note: Qemu itself is a type-II hypervisor (and an emulator). Qemu/KVM
-uses tools from Qemu to emulate devices, and Qemu/KVM is a Type-I hypervisor.
+![Type I VM](assets/T1vm.png){width=40%}\ ![Type II VM](assets/T2vm.png){width=40%}
 
 ## Hardware support
 
@@ -180,11 +184,15 @@ WIP
 
 - [OLS](https://www.kernel.org/doc/ols/2007/ols2007v1-pages-179-188.pdf)
 - [CMU](https://www.cs.cmu.edu/~410-f06/lectures/L31_Virtualization.pdf)
-
 - [x86 virtualization](https://en.wikipedia.org/wiki/X86_virtualization)
 - [IOMMU](https://en.wikipedia.org/wiki/Input%E2%80%93output_memory_management_unit)
 - [SLAT](https://en.wikipedia.org/wiki/Second_Level_Address_Translation)
 
+### Graphs
+
+- [James E. Smith and Ravi Nair - Virtual Machines](https://www.sciencedirect.com/book/9781558609105/virtual-machines)
+- [Virtualizing I/O Devices on VMware Workstation's Hosted Virtual Machine Monitor](https://www.usenix.org/conference/2001-usenix-annual-technical-conference/virtualizing-io-devices-vmware-workstations)
+
 ## License
 
-This work is licensed under CC BY 4.0
+This work (README.md) is licensed under CC BY 4.0.
