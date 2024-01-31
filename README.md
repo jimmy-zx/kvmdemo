@@ -222,31 +222,38 @@ e.g. `in eax, #port         'Read input from that port'`
 
 - Checking existence of VM files, running services such as VMtools (retrieved using WMIC, Win API and CMD)
 
-## Compute CPU overhead time
+## Compute CPU overhead time (IPR)
 - Execution of some special instructions produce remarkable additional Virtual Machine Monitor overhead.
 - Making use of the relative time overhead, VM environment can be detected.
-- (IN PROGRESS)
 
-## Anti VM detection
+
+## Anti VM detection (IPR)
 
 CPUID Spoofer, Pafish, al-khaser (bypass vm detection by changing some fields).
 
 Example:
-Starting a Windows 11 vm (maybe should change to Windows 10 later for better illustration)
-Run vm detection (Pafish): ![before modification](assets/Screenshot_2024-01-31_12-57-18.png)
-Shut down vm, go to physical machine, modify `.vmx` file (vmware) (IPR):
-modify MAC address to whatever except below:
-00:05:69 (Vmware)
-00:0C:29 (Vmware)
-00:1C:14 (Vmware)
-00:50:56 (Vmware)
-08:00:27 (VirtualBox)
-or equivalently we could add the following to `.vmx` file:
+- Starting a Windows 11 vm (maybe should change to Windows 10 later for better illustration)
+
+- Run vm detection (Pafish): ![before modification](assets/Screenshot_2024-01-31_12-57-18.png)
+
+- Shut down vm, go to physical machine, modify `.vmx` file (vmware):
+
+- modify MAC address to whatever except below:
+    00:05:69 (Vmware)
+    00:0C:29 (Vmware)
+    00:1C:14 (Vmware)
+    00:50:56 (Vmware)
+    08:00:27 (VirtualBox)
+
+- or equivalently we could add the following to `.vmx` file:
+
+
 ```
 ethernet0.address = "00:10:34:3B:F3:11"
 ethernet1.address = "00:31:34:37:A6:F9"
 ```
-Restart the vm and run pafish, it bypasses some detection:
+
+- Restart the vm and run pafish, it bypasses some detection:
 ![after modification](assets/s2.png)
 
 
