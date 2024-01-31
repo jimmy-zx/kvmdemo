@@ -37,7 +37,7 @@ Containers:
 
 But an O/S already does that!
 
-![ABI vs ISA](assets/ABIvsISA.png)
+![ABI vs ISA from (1)](assets/ABIvsISA.png)
 
 ## How to build a VM
 
@@ -50,19 +50,34 @@ O/S provides CPU multiplexing using processes, but in user mode (Ring 3).
 What should we do when the kernel wants an priviledged instruction?
 (Setting up interrupt handlers, page tables, etc.)
 
+## Types of hypervisors
+
+- Type-I hypervisor: runs directly from the hardware (ESXi, KVM, Xen)
+- Type-II hypervisor: runs on an O/S (VirtualBox, VMWare, Qemu)
+
+![Type I VM (2)](assets/T1vm.png){width=40%}\ ![Type II VM (2)](assets/T2vm.png){width=40%}
+
 ## VM Topology
 
 We want something to adapt the physical interface to the guest OS.
 
-![Topology](assets/VMTopology.png)
+![Topology (1)](assets/VMTopology.png)
 
 ## How to build a VM - Goals
 
 Performance! We want the guest to be run with small overheads.
 
-Interpreting the instructions on the fly is very slow. (Like Python)
-We want the binary to be executed on the CPU directly. (As much as possible,
-only if guest ISA is the same as host ISA.)
+### Full virtualization
+
+Interpreting the instructions on the fly is. (Similar to Python)
+Very slow!
+
+### Paravirtualization
+
+We want the binary to be executed on the CPU directly.
+
+Guests are executed in isolated domain, but harware are not simulated.
+Some instructions needs to be handled by the hypervisor.
 
 ## Virtualize priviledged instruction
 
@@ -71,9 +86,9 @@ When the guest wants to execute some priviledge instruction, it must be
 **interpreted** so that the hypervisor does the request for the guest and
 pass back the control to the guest.
 
-Ideally the guest should not be aware of this process, transparency.
+Ideally the guest should not be aware of this process for transparency.
 
-## Using traps
+## Interception - Using traps
 
 When a priviledged instruction is executed in user mode, the CPU will
 generate an interrupt (usually Generally Protection) and traps to the kernel.
@@ -86,18 +101,23 @@ not require priviledge.
 
 Ideally, sensitive instruction should be a subset of priviledged instructions.
 
-## Modification of guest
+## Interception - Modification of guest code
 
 Intercept the execution of sensitive instructions, by replacing
 them with a call to the hypervisor. (hypercall)
 
-- Binary rewriting: before loading a binary into the memory, examine them
-    so that every sensitive instruction is replaced by a hypercall.
-    Maintains a cache for performance. (VMWare)
-- Customized kernel: rewrite the kernel such that priviledged instructions
-    are replaced by a hypercall. (Xen)
+### Binary rewriting
 
-## Paravirtualization
+Before loading a binary into the memory, examine them
+so that every sensitive instruction is replaced by a hypercall.
+Maintains a cache for performance. (VMWare)
+
+### Guest modification
+
+Rewrite the kernel such that priviledged instructions
+are replaced by a hypercall. (Xen)
+
+## Hypercalls
 
 Now the CPU is virtualized. What about devices?
 
@@ -108,29 +128,28 @@ Instead, we can use custom drivers to issue **hypercalls** instead.
 
 > Hypercalls can be must faster than traps.
 
-The guest drivers *knows* what the guest O/S are doing, and are aware of
+The guest drivers *know* what the guest O/S are doing, and are aware of
 the presence of a hypervisor. Therefore special optimization can be done.
 
-Other devices (such as MMU) would also require cooperation from the hypervisor.
+## Hypercalls - Xen
 
-## Types of hypervisors
+![Architecture of Xen](./assets/XenArch.png)
 
-- Type-I hypervisor: runs directly from the hardware (ESXi, KVM, Xen)
-- Type-II hypervisor: runs on an O/S (VirtualBox, VMWare, Qemu)
+## Hypercalls - Xen performance
 
-![Type I VM](assets/T1vm.png){width=40%}\ ![Type II VM](assets/T2vm.png){width=40%}
+![Performance comparison](./assets/XenPerf.png)
 
 ## Hardware support
 
-`vmx` (Intel VT-x), `svm` (AMD-v), allowing the CPU to enter
+- `vmx` (Intel VT-x), `svm` (AMD-v), allowing the CPU to enter
 a virtual execution mode (in Ring 0) but the host OS is still protected.
 
-Page table virtualization (SLAT): treat guest physical address as a host-virtual address.
+- Page table virtualization (SLAT): treat guest physical address as a host-virtual address.
 Nested Page Tables (AMD), Extended Page Tables (Intel)
 
-I/O virtualization, IOMMU virtualization: allow mmap'd IO to be used directly in guests: AMD-Vi (AMD), VT-d (Intel)
+- I/O virtualization, IOMMU virtualization: allow mmap'd IO to be used directly in guests: AMD-Vi (AMD), VT-d (Intel)
 
-Nested (hardware) virtualization.
+- Nested (hardware) virtualization.
 
 ## VM detection
 
@@ -182,16 +201,17 @@ WIP
 
 ## References
 
-- [OLS](https://www.kernel.org/doc/ols/2007/ols2007v1-pages-179-188.pdf)
-- [CMU](https://www.cs.cmu.edu/~410-f06/lectures/L31_Virtualization.pdf)
-- [x86 virtualization](https://en.wikipedia.org/wiki/X86_virtualization)
-- [IOMMU](https://en.wikipedia.org/wiki/Input%E2%80%93output_memory_management_unit)
-- [SLAT](https://en.wikipedia.org/wiki/Second_Level_Address_Translation)
+1. [OLS](https://www.kernel.org/doc/ols/2007/ols2007v1-pages-179-188.pdf)
+2. [CMU Virtualization slides](https://www.cs.cmu.edu/~410-f06/lectures/L31_Virtualization.pdf)
+3. [Wikipedia: x86 virtualization](https://en.wikipedia.org/wiki/X86_virtualization)
+4. [Wikipedia: IOMMU](https://en.wikipedia.org/wiki/Input%E2%80%93output_memory_management_unit)
+5. [Wikipedia: SLAT](https://en.wikipedia.org/wiki/Second_Level_Address_Translation)
+6. [Wikipedia: Virtualization](https://en.wikipedia.org/wiki/Virtualization)
 
 ### Graphs
 
-- [James E. Smith and Ravi Nair - Virtual Machines](https://www.sciencedirect.com/book/9781558609105/virtual-machines)
-- [Virtualizing I/O Devices on VMware Workstation's Hosted Virtual Machine Monitor](https://www.usenix.org/conference/2001-usenix-annual-technical-conference/virtualizing-io-devices-vmware-workstations)
+1. [James E. Smith and Ravi Nair - Virtual Machines](https://www.sciencedirect.com/book/9781558609105/virtual-machines)
+2. [Virtualizing I/O Devices on VMware Workstation's Hosted Virtual Machine Monitor](https://www.usenix.org/conference/2001-usenix-annual-technical-conference/virtualizing-io-devices-vmware-workstations)
 
 ## License
 
