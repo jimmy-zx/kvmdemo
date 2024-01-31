@@ -1,8 +1,6 @@
 # CSC427 - Virtual machines
 
-## Introduction
-
-### Why VM
+## Why VM
 
 In CSC347:
 - Run another O/S with vulunerbility
@@ -15,23 +13,24 @@ Generally:
 - Isolation (Testing a virus in a VM)
 - Multiple versions of a shared library
 
-### VM Vendors
+## VM Vendors
 
 - VMWare
 - VirtualBox (Oracle)
 - QEMU/KVM
 - Xen
 
-### Similar technologies
+## Similar technologies
 
 Containers:
+
 - Docker
 - LinuX Containers
 - K8s
 - Chroot
 - Wine
 
-### What is a VM
+## What is a VM
 
 - Virtualizes system resources
 - Transparency
@@ -40,7 +39,7 @@ But an O/S already does that!
 
 [Image for vm topology](img1.png)
 
-### How to build a VM
+## How to build a VM
 
 Goal: run an O/S kernel
 
@@ -51,16 +50,14 @@ O/S provides CPU multiplexing using processes, but in user mode (Ring 3).
 What should we do when the kernel wants an priviledged instruction?
 (Setting up interrupt handlers, page tables, etc.)
 
-### Goals
+## How to build a VM - Goals
 
 Performance! We want the guest to be run with small overheads.
 
 Interpreting the instructions on the fly is very slow! (Like Python)
 We want the binary to be executed on the CPU directly.
 
-### Native execution
-
-#### Virtualize priviledged instruction
+## Virtualize priviledged instruction
 
 When the guest wants to execute some priviledge instruction, it must be
 **intercepted** and trapped into the hypervisor so that the request can be
@@ -69,7 +66,7 @@ pass back the control to the guest.
 
 Ideally the guest should not be aware of this process, transparency.
 
-#### How to virtualize - Traps
+## Using traps
 
 When a priviledged instruction is executed in user mode, the CPU will
 generate an interrupt (usually Generally Protection) and traps to the kernel.
@@ -82,7 +79,7 @@ not require priviledge.
 
 Ideally, sensitive instruction should be a subset of priviledged instructions.
 
-#### How to virtualize - Modification
+## Modification of guest
 
 Intercept the execution of sensitive instructions, by replacing
 them with a call to the hypervisor. (hypercall)
@@ -93,7 +90,7 @@ them with a call to the hypervisor. (hypercall)
 - Customized kernel: rewrite the kernel such that priviledged instructions
     are replaced by a hypercall. (Xen)
 
-### Paravirtualization
+## Paravirtualization
 
 Now the CPU is virtualized. What about devices?
 
@@ -109,7 +106,7 @@ the presence of a hypervisor. Therefore special optimization can be done.
 
 Other devices (such as MMU) would also require cooperation from the hypervisor.
 
-### Types of hypervisors
+## Types of hypervisors
 
 - Type-I hypervisor: runs directly from the hardware (ESXi, KVM, Xen)
 - Type-II hypervisor: runs on an O/S (VirtualBox, VMWare, Qemu)
@@ -119,7 +116,7 @@ Other devices (such as MMU) would also require cooperation from the hypervisor.
 Note: Qemu itself is a type-II hypervisor (and an emulator). Qemu/KVM
 uses tools from Qemu to emulate devices, and Qemu/KVM is a Type-I hypervisor.
 
-### Hardware support
+## Hardware support
 
 `vmx` (Intel VT-x), `svm` (AMD-v), allowing the CPU to enter
 a virtual execution mode (in Ring 0) but the host OS is still protected.
