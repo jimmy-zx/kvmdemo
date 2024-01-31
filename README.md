@@ -130,7 +130,45 @@ Nested (hardware) virtualization.
 
 ## VM detection
 
-WIP
+The problem: dynamic analysis of malware is typically automated and done from virtual machine - but what if the malware is aware?
+
+So we need to understand how: 
+
+1. malware author detect when malware is running in a virtual environment
+2. to harden the security system to reduce the odds of evasion
+3. to identify anti-VM behavior in order to improve detection
+
+## How malware identify VMs
+
+VM is designed to mimic the hardware.
+
+But artifacts remain which indicate a virtual machine and not a physical one: specific files, processes, registry keys, services, network device adapters
+
+Malware authors code the malware to detect vm configuration files, executables, registry entries or other indicators in order to manipulate their original execution flow -> this behavior is referred to as "Anti-Sandbox", "Anti-VM", "VM Evasion"
+
+## Checking CPU instructions
+
+1. `CPUID` instruction is executed with `EAX=1` as input, the return value describes the processors features
+e.g. The 31st bit of `ECX` on a physical machine will be equal to 0; on a guest VM it will equal to 1
+2. Hypervisor brand: by calling `CPUID` with `EAX=40000000` as input 1; Malware will return the virtualization vendor string in `EAX`, `ECX`, `EDX`
+e.g. Microsoft: "Microsoft HV"; VMware: "VMwareVMware"
+3. MMX: an Intel instruction set designed for faster processing of graphical applications. These are usually not supported in VMs so their absence may indicate that the malware is running in a VM
+4. `IN`: in VMWare (KVM?) communication with the host is done through a specific I/O port (lab); useful for detecting a VMware environment
+e.g. `in eax, #port         'Read input from that port'`
+
+## Checking other paravirtualization devices
+
+- Checking for known MAC addresses: prefixes of MAC addresses indicate the network adapter's vendor. (using WMIC, windows command)
+
+- Checking for registry keys: the existence of the registry entries indicates the existence of virtualization software
+
+- Checking for VM Processes
+
+- Checking existence of VM files, running services such as VMtools (retrieved using WMIC, Win API and CMD)
+
+## Anti VM detection
+
+CPUID Spoofer, Pafish, al-khaser (bypass vm detection by changing some fields).
 
 ## VM escape
 
