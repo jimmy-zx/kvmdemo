@@ -1,10 +1,10 @@
-# CSC427 - Virtual machines
+---
+title: "CSC427 - Virtual machines"
+author: "Kaitian Zheng, Shiqi Chen, Jianjun Zhao"
+toc: true
+---
 
-## Table of contents
-
-1. Introduction to VMs
-2. VM detection
-3. VM escape
+# Introduction
 
 ## Why VM
 
@@ -182,6 +182,8 @@ Nested Page Tables (AMD), Extended Page Tables (Intel)
 
 - Nested (hardware) virtualization.
 
+# VM detection
+
 ## VM detection
 
 The problem: dynamic analysis of malware is typically automated and done from virtual machine - but what if the malware is aware?
@@ -224,9 +226,13 @@ e.g. `in eax, #port         'Read input from that port'`
 
 CPUID Spoofer, Pafish, al-khaser (bypass vm detection by changing some fields).
 
+# VM escape
+
 ## VM escape
 
 WIP
+
+# Lab
 
 ## Lab
 
