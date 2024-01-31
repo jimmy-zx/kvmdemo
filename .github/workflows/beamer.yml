@@ -1,0 +1,20 @@
+on:
+  push:
+    branches: [ "lecture" ]
+
+jobs:
+  export:
+    name: Export
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install pandoc
+        run: |
+          apt-get install pandoc
+      - name: Compile
+        run: |
+          make README.pdf
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: README
+          path: README.pdf
