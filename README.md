@@ -256,9 +256,7 @@ to call the function `exploit()`.
 You will built a very simple handler to allow the guest to read
 characters from the hypervisor's STDIN.
 
-## End of slides
-
-### Q&A
+# End of slides
 
 ## References
 
