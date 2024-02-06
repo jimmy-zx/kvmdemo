@@ -8,7 +8,9 @@ We've built a mini hypervisor based on `kvm`, which runs the binary `guest.bin`
 by default. You may optional review `kvmutil.{h,c}`, but this is not required.
 
 Skim through `main.c`.
-The hypervisor loads the guest binary `guest.bin`. When the virtual CPU encounters
+The hypervisor loads the guest binary `guest.bin` and runs the guest in a loop
+via `vcpu_thread()`.
+When the virtual CPU encounters
 some instruction that it cannot proceed,
 the virtual machine will [trap into the hypervisor](https://github.com/jimmy-zx/kvmdemo/blob/652cb499cc58d5bbc2c96ca676d47200d4626fb0/main.c#L64), providing an `exit_reason`
 to hint how the hypervisor should handle the trap. We only care about the case for
@@ -19,7 +21,20 @@ into different functionality based on `io.direction` (IN/OUT) and `io.port`.
 The starter code provides two IO handlers: IN (0x10) and IN (0x20).
 See the table below for details.
 
-You may play with `guest.S` to see how the IO handler works. In particular,
+You can use `make run` to run the hypervisor. By default the hypervisor should print
+```
+exploit() located at XXXXX
+vcpu_thread: running 0
+io_handler: dir=1 sz=2 port=16 count=1 offset=4096, data=b
+Hello, world!
+vcpu_thread: running 0
+io_handler: dir=1 sz=2 port=32 count=1 offset=4096, data=b
+Hello, world!
+vcpu_thread: running 0
+vcpu_thread: 0 shutting down gracefully
+```
+
+You may optionally play with `guest.S` to see how the IO handler works. In particular,
 
 - Print a string of your choice.
 - Perform some IO that is not defined in the hypervisor.
@@ -30,17 +45,26 @@ terminated string.
 
 1. There are some buffer overflow vulunerbility in the hypervisor `main.c`.
 Identify this and modify the guest application `guest.S` to force
-the hypervisor to call the function `exploit()`.
+the hypervisor to call the function `exploit()`. Running `make run` should result the following
+string to be printed:
+```
+This hypervisor has been exploited.
+```
+
+Hint: modifying the target string is enough.
+
+You should call the function `exploit()` instead of printing this string directly.
 
 2. Implement a handler for handling a guest request to read a character from
 the hypervisor's STDIN. The guest should be able to use `inb $0x30,[register]`
 to read a character from the hypervisor's STDIN.
 
-Play with your implementation to confirm if the handler really works. You may
-optionally implement a `cat` program that reads from the STDIN and prints
-out every character it received.
+You may use the provided `cat_guest.S` to test your implementation.
+```bash
+$ ./main cat_guest.bin
+```
 
-You should NOT modify any part of the hypervisor.
+You should NOT modify any part of the hypervisor in task 2.
 
 Task 1 and task 2 are independent of each other.
 

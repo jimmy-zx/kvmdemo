@@ -3,7 +3,7 @@
 	.code16
 _start:
 	movw $target,%ax
-	outw %ax,$0x10
+	outw %ax,$0x10  // printf("%s\n", target);
 	movw $target,%ax
 	outw %ax,$0x20
 	hlt

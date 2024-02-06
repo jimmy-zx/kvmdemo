@@ -12,6 +12,7 @@
 
 #define PORT_PRINT 0x10
 #define PORT_BUGGY_PRINT 0x20
+#define PORT_GETCHAR 0x30
 
 static void exploit() {
   printf("This hypervisor has been exploited.\n");
