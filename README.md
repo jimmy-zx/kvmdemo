@@ -51,22 +51,21 @@ string to be printed:
 This hypervisor has been exploited.
 ```
 
-Hint: modifying the target string is enough.
-
-You should call the function `exploit()` instead of printing this string directly.
+- It is okay for the hypervisor to SEGFAULT.
+- You should NOT modify any part of the hypervisor in task 2.
+- You should call the function `exploit()` instead of printing this string directly.
+- Hint: modifying the target string is enough.
 
 2. Implement a handler for handling a guest request to read a character from
 the hypervisor's STDIN. The guest should be able to use `inb $0x30,[register]`
 to read a character from the hypervisor's STDIN.
 
-You may use the provided `cat_guest.S` to test your implementation.
+- You may use the provided `cat_guest.S` to test your implementation.
 ```bash
 $ ./main cat_guest.bin
 ```
 
-You should NOT modify any part of the hypervisor in task 2.
-
-Task 1 and task 2 are independent of each other.
+- Task 1 and task 2 are independent of each other.
 
 ### What to submit:
 
