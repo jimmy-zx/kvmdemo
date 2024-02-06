@@ -97,12 +97,17 @@ int load_binary(struct vm *vm, const char *path) {
   return 0;
 }
 
-int main() {
+int main(int argc, char **argv) {
   // A helper to help you to find the address of the exploited function.
   // This would always leads to a warning.
   // COMMENT IT OUT BEFORE YOUR SUBMISSION!
 
   printf("exploit() located at %p\n", (void *) exploit);
+
+  const char *guest_path = "./guest.bin";
+  if (argc == 2) {
+    guest_path = argv[1];
+  }
 
   struct vm vm = {.vm_mem_size = 0x200000 };
   struct vcpu vcpu = {.vm = &vm, .vcpu_id = 0};
@@ -114,7 +119,7 @@ int main() {
     fprintf(stderr, "Failed to create vcpu\n");
     return -1;
   }
-  if (load_binary(&vm, "./guest.bin") != 0) {
+  if (load_binary(&vm, guest_path) != 0) {
     fprintf(stderr, "Failed to load binary\n");
     return -1;
   }
