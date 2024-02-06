@@ -1,6 +1,15 @@
 # kvmdemo
 
-## Tasks
+## 
+
+1. We've built a mini hypervisor based on `kvm`, which runs the binary `guest.bin`
+by default. You may optional review `kvmutil.{h,c}`, but this is not required.
+
+The hypervisor loads the guest binary `guest.bin`. When the virtual CPU encounters
+some instruction that it cannot proceed (in this lab we only care about I/O),
+the virtual machine will [trap into the hypervisor](https://github.com/jimmy-zx/kvmdemo/blob/652cb499cc58d5bbc2c96ca676d47200d4626fb0/main.c#L64), providing an `exit_reason`
+to hint how the hypervisor should handle the trap. We care about the case for
+`KVM_EXIT_IO`, which is handled in [`io_handler`](https://github.com/jimmy-zx/kvmdemo/blob/652cb499cc58d5bbc2c96ca676d47200d4626fb0/main.c#L30).
 
 1. There are some buffer overflow vulunerbility in the hypervisor `main.c`.
 Identify this and modify the guest application `guest.S` to force
@@ -40,6 +49,8 @@ The two tasks above are independent of each other.
 
 [Useful link](https://sourceware.org/binutils/docs/as/Pseudo-Ops.html)
 to construct your payload using GNU as.
+
+[struct kvm_run](https://docs.kernel.org/virt/kvm/api.html#the-kvm-run-structure)
 
 ## References
 

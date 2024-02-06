@@ -43,13 +43,14 @@ int io_handler(struct vcpu *vcpu) {
     switch (vcpu->vcpu_kvm_run->io.port) {
       case PORT_PRINT:
         printf("%s\n", vcpu->vm->vm_mem + *(__u16 *) data);
-        break;
+        return 0;
       case PORT_BUGGY_PRINT:
         buggy_print(vcpu);
-        break;
+        return 0;
     }
+    return -1;
   }
-  return 0;
+  return -1;
 }
 
 void *vcpu_thread(void *data) {
