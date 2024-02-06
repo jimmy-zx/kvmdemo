@@ -16,8 +16,8 @@ the virtual machine will [trap into the hypervisor](https://github.com/jimmy-zx/
 to hint how the hypervisor should handle the trap. We only care about the case for
 `KVM_EXIT_IO`, which is handled in [`io_handler()`](https://github.com/jimmy-zx/kvmdemo/blob/652cb499cc58d5bbc2c96ca676d47200d4626fb0/main.c#L30).
 
-The IO handler first prints out all the IO-related fields, and dispatches
-into different functionality based on `io.direction` (IN/OUT) and `io.port`.
+The IO handler first prints out all the IO-related fields, and then dispatches
+into different functionalities based on `io.direction` (IN/OUT) and `io.port`.
 The starter code provides two IO handlers: IN (0x10) and IN (0x20).
 See the table below for details.
 
@@ -43,7 +43,9 @@ terminated string.
 
 ## Tasks
 
-1. There are some buffer overflow vulunerbility in the hypervisor `main.c`.
+### Task 1 - VM Escape
+
+There are some buffer overflow vulunerbility in the hypervisor `main.c`.
 Identify this and modify the guest application `guest.S` to force
 the hypervisor to call the function `exploit()`. Running `make run` should result the following
 string to be printed:
@@ -56,7 +58,9 @@ This hypervisor has been exploited.
 - You should call the function `exploit()` instead of printing this string directly.
 - Hint: modifying the target string is enough.
 
-2. Implement a handler for handling a guest request to read a character from
+### Task 2 - IO Handler
+
+Implement a handler for handling a guest request to read a character from
 the hypervisor's STDIN. The guest should be able to use `inb $0x30,[register]`
 to read a character from the hypervisor's STDIN.
 
@@ -65,6 +69,7 @@ to read a character from the hypervisor's STDIN.
 $ ./main cat_guest.bin
 ```
 
+- You should write the result of `getchar()` to the provided `data` variable.
 - Task 1 and task 2 are independent of each other.
 
 ### What to submit:
