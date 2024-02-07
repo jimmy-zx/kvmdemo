@@ -3,10 +3,10 @@
 	.code16
 _start:
 loop:
-	inb $0x30,%al	// al = getchar()
-	movb %al,(buf)	// buf[0] = al
+	inb $0x30,%al
+	movb %al,(buf)
 	movw $buf,%ax
-	outw %ax,$0x10  // printf("%s\n", buf);
+	outw %ax,$0x10
 	jmp loop
 
 	.data
